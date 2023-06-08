@@ -9,22 +9,19 @@ jobs:
    
     - name: Install AWS CLI
       run: |
-        curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64-2.6.3.zip" -o "awscliv2.zip"
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip awscliv2.zip
         sudo ./aws/install
 
     - name: Install AWS EKS CLI
       run: |
-        curl --silent --location "https://amazonaws.com/eks/latest/download/aws-iam-authenticator" -o /usr/local/bin/aws-iam-authenticator
-        chmod +x /usr/local/bin/aws-iam-authenticator
-        echo 'export PATH=$PATH:/usr/local/bin' >> ~/.bash_profile
-        source ~/.bash_profile
+        curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+        sudo mv /tmp/eksctl /usr/local/bin
 
     - name: Install specific version of kubectl
       run: |
-        curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
-        chmod +x ./kubectl
-        sudo mv ./kubectl /usr/local/bin/kubectl
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
    
     - name: Connect to EKS cluster
       run: |
