@@ -1,4 +1,4 @@
-name: Install NGINX on EKS
+name: Install NGINX en EKS
 on: [push]
 jobs:
   install_nginx:
