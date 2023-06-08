@@ -7,21 +7,24 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-1  # replace with your AWS region
-   
+    - name: Install AWS CLI
+      run: |
+        curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64-2.6.3.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+
     - name: Install AWS EKS CLI
       run: |
         curl --silent --location "https://amazonaws.com/eks/latest/download/aws-iam-authenticator" -o /usr/local/bin/aws-iam-authenticator
         chmod +x /usr/local/bin/aws-iam-authenticator
         echo 'export PATH=$PATH:/usr/local/bin' >> ~/.bash_profile
         source ~/.bash_profile
-        curl --silent --location "https://amazonaws.com/eks/latest/download/kubectl" -o /usr/local/bin/kubectl
-        chmod +x /usr/local/bin/kubectl
+
+    - name: Install specific version of kubectl
+      run: |
+        curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.6/bin/linux/amd64/kubectl
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/local/bin/kubectl
    
     - name: Connect to EKS cluster
       run: |
